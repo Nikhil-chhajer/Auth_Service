@@ -1,23 +1,36 @@
-const express=require('express');
-const app=express();
-const apiRoutes=require('./routes/index');
-const {PORT}=require('./config/serverConfig');
+const express = require('express');
+const app = express();
+const apiRoutes = require('./routes/index');
+const { PORT } = require('./config/serverConfig');
+const db = require('./models/index');
 const bodyParser = require('body-parser');
-const UserRepository=require('./repository/user-repository');
-const UserService=require('./services/User-service');
-const prepareAndStartServer=async ()=>{
+const {User,Role}=require('./models/index');
+const UserRepository = require('./repository/user-repository');
+const UserService = require('./services/User-service');
+const prepareAndStartServer = async () => {
        app.use(bodyParser.json());
        app.use(bodyParser.urlencoded({
-              extended:true
+              extended: true
        }));
-       app.listen(PORT,()=>{
-        console.log("Server Started at ",PORT);
+       app.listen(PORT, () => {
+              console.log("Server Started at ", PORT);
        })
-       app.use('/api',apiRoutes);
+       app.use('/api', apiRoutes);
+    if (process.env.Sync_DB) {
+            db.sequelize.sync({
+                alter: true
+            });
+         }
+         const u1=await User.findByPk(2);
+         const r1=await Role.findByPk(2);
+         u1.addRole(r1);
+         //const response=await u1.getRoles();
+         //const response=await u1.hasRole(r1);shows wheather user has a role or not
+         //console.log(response);
        // const repo=new UserRepository();
        // const response=await repo.getById(2);
        // console.log(response);
-        const service=new UserService();
+       //const service=new UserService();
        // const newtoken=service.createToken({
        //        email:" nikhil@admin.com ",
        //        id:1
