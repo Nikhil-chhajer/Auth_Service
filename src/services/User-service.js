@@ -35,23 +35,23 @@ class UserService {
             throw error;
         }
     }
-    async isAuthenticated(token){
+    async isAuthenticated(token) {
         try {
-            const response=this.verifyToken(token);
+            const response = this.verifyToken(token);
             if (!response) {
-                throw{error:"Invalid token"};
-                
+                throw { error: "Invalid token" };
+
             }
-            const user=await this.userRepository.getById(response.id);
-            if(!user){
-                throw{error:"No User with corresponding token"};
+            const user = await this.userRepository.getById(response.id);
+            if (!user) {
+                throw { error: "No User with corresponding token" };
 
             }
             return user.id;
         } catch (error) {
             console.log("Something went wrong in auth process");
             throw error;
-            
+
         }
     }
     createToken(user) {
@@ -86,6 +86,15 @@ class UserService {
             throw error;
         }
 
+    }
+    isAdmin(userId) {
+        try {
+            return this.userRepository.isAdmin(userId);
+
+        } catch (error) {
+            console.log("Something went wrong in Service layer");
+            throw error;
+        }
     }
 }
 module.exports = UserService;
